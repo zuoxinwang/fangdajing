@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>兼容列表的放大镜</title>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<style>
+
+.probox {
+	width:300px;!important
+	height:300px;!important
+	border:1px solid #000;!important
+}
+.probox img {
+	width:300px;!important
+	height:300px;!important
+	vertical-align:top;!important
+}
+.showbox {
+	display:none;
+	position:absolute;
+	width:400px;
+	height:300px;
+	overflow:hidden;
+	border:1px solid #ccc;
+	margin-left:403px;
+	margin-top:-200px;
+}
+.showbox img {
+	position:absolute;
+	height:1200px;
+	width:1200px;
+}
+.hoverbox {
+	display:none;
+	position:absolute;
+	background:#09f;
+	border:1px solid #09f;
+	height:75px;
+	width:100px;
+	cursor:move;
+	z-index:10;
+}
+</style>
+</head>
+<body>
+
+
+<div class="proBoxImg" id="aa">
+    <div class="probox">
+        <img src="img/pcb.jpg" alt="">
+        <div class="hoverbox"></div>
+    </div>
+    <div class="showbox">
+        <img src="img/pcb.jpg" alt="">
+    </div>
+</div>
+
+<div class="proBoxImg" id="bb">
+    <div class="probox">
+        <img src="http://wangzuoxin.com/111.jpg" alt="">
+        <div class="hoverbox"></div>
+    </div>
+    <div class="showbox">
+        <img src="http://wangzuoxin.com/111.jpg" alt="">
+    </div>
+</div>
+
+<div class="proBoxImg" id="cc">
+    <div class="probox">
+        <img src="https://pic2.zhimg.com/v2-d02bb41261829d38045a23385bbae101_r.jpg" alt="">
+        <div class="hoverbox"></div>
+    </div>
+    <div class="showbox">
+        <img src="https://pic2.zhimg.com/v2-d02bb41261829d38045a23385bbae101_r.jpg" alt="">
+    </div>
+</div>
+
+<script>
+function showBigChange(proBoxImg, hoverbox, l, t, x, y, w, h, showBoxImg) {
+	
+	//鼠标移动坐标
+    var moveX = x - (w / 2);
+    var moveY = y - (h / 2);
+	
+	//判断鼠标使其不跑出图片框
+    if (moveX < l) {
+        moveX = l
+    }
+    if (moveY < t) {
+        moveY = t
+    }
+    if (moveX >l+ proBoxImg.width() - hoverbox.width()) {
+        moveX = l+proBoxImg.width() - hoverbox.width()
+    }
+    if (moveY > t+proBoxImg.height() - hoverbox.height()) {
+        moveY = t+proBoxImg.height() - hoverbox.height()
+    }
+    
+	
+    var scaleX = (showBoxImg.width()-400) / (proBoxImg.width()-w)
+    //求图片比例
+    var scaleY = (showBoxImg.height()-300) /(proBoxImg.height()-h)
+
+    showBoxImg.css({
+        left: -((moveX-l) * scaleX),
+        top: -((moveY-t) * scaleY)
+    })
+    hoverbox.css({
+        left: moveX,
+        top: moveY
+    })
+}
+
+function showBigHover(proBoxImg, hoverbox, showBoxImg,pro,showChange) {
+    var l = proBoxImg.offset().left;
+    var t = proBoxImg.offset().top;
+    var w = hoverbox.width();
+    var h = hoverbox.height();
+    var time;
+    pro.mouseover(function(e) {
+        var x = e.pageX;
+        var y = e.pageY;
+        showChange.show();
+        hoverbox.css("opacity", "0.3")
+        time = setTimeout(function() {
+            showBigChange(proBoxImg, hoverbox, l, t, x, y, w, h, showBoxImg)
+        }, 1)
+    }).mousemove(function(e) {
+        var x = e.pageX;
+        var y = e.pageY;
+        time = setTimeout(function() {
+            showBigChange(proBoxImg, hoverbox, l, t, x, y, w, h, showBoxImg)
+        }, 1)
+    }).mouseout(function() {
+        showBoxImg.parent().hide()
+        hoverbox.hide();
+    })
+}
+$(function() {
+    showBigHover($("#aa .probox img"), $("#aa .probox .hoverbox"), $("#aa .showbox img"),$("#aa .probox img,#aa .probox .hoverbox"),$("#aa .probox .hoverbox,#aa .showbox"));
+	
+	showBigHover($("#bb .probox img"), $("#bb .probox .hoverbox"), $("#bb .showbox img"),$("#bb .probox img,#bb .probox .hoverbox"),$("#bb .probox .hoverbox,#bb .showbox"));
+	
+	showBigHover($("#cc .probox img"), $("#cc .probox .hoverbox"), $("#cc .showbox img"),$("#cc .probox img,#cc .probox .hoverbox"),$("#cc .probox .hoverbox,#cc .showbox"));
+})
+</script>
+
+</body>
+</html>
